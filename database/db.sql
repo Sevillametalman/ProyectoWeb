@@ -5,10 +5,15 @@ CREATE TABLE users(
     admin BOOLEAN NOT NULL
 );
 
+CREATE TABLE races(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
 CREATE TABLE daemon(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
-    race VARCHAR(255) NOT NULL,
+    race_id INT NOT NULL REFERENCES races(id), 
     level INT,
     hp INT,
     mp INT,
@@ -22,8 +27,8 @@ CREATE TABLE daemon(
 
 CREATE TABLE daemonUsers(
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
-    daemon_id INT REFERENCES daemon(id),
+    user_id INT NOT NULL REFERENCES users(id),
+    daemon_id INT NOT NULL REFERENCES daemon(id),
     level INT,
     hp INT,
     mp INT,
