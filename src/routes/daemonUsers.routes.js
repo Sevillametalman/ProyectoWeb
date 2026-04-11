@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {} from "../controllers/daemonUsers.controllers.js";
+import {asignDaemonToUser} from "../controllers/daemonUsers.controllers.js";
 
 const router = Router();
 
