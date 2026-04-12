@@ -10,6 +10,14 @@ CREATE TABLE races(
     name VARCHAR(255) NOT NULL UNIQUE
 );
 
+CREATE TABLE race_fusions (
+    id SERIAL PRIMARY KEY,
+    race1_id INTEGER NOT NULL REFERENCES races(id),
+    race2_id INTEGER NOT NULL REFERENCES races(id),
+    result_race_id INTEGER NOT NULL REFERENCES races(id),
+    UNIQUE (race1_id, race2_id)
+);
+
 CREATE TABLE daemon(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,

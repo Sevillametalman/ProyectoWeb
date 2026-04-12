@@ -2,45 +2,86 @@ import pool from "../db.js";
 
 export const getCalculatedDaemon = async (req, res) => {
   try {
-    const { id_daemon_1, id_daemon_2 } = req.params;
+    const { id1, id2 } = req.params;
 
-    const daemon1 = await getDaemon(id_daemon_1);
-    const daemon2 = await getDaemon(id_daemon_2);
+    const daemon1 = await getDaemon(id1);
+    const daemon2 = await getDaemon(id2);
 
-    const levelOfNewDaemon = await calculateLevel(id_daemon_1.level, id_daemon_2.level);
+    const levelOfNewDaemon = await calculateLevel(daemon1.level, daemon2.level);
 
-    const race1 = await getDaemonRace(daemon1.race)
-    const race2 = await getDaemonRace(daemon2.race)
+    const race1 = daemon1.race_id;
+    const race2 = daemon2.race_id;
 
-    const { rows } = await pool.query(
-      `SELECT * FROM calculator WHERE race1 = $1 AND race2 = $2`,
-      [race1, race2],
-    );
+    const raceOfDaemonsToSelect = await getResultingRace(race1, race2);
+
+    if (raceOfDaemonsToSelect !== 0) {
+      const listOfDaemons = await getDaemonsFromRace(raceOfDaemonsToSelect);
+      console.log(listOfDaemons);
+
+      const newDaemon = await calculatedDaemon(listOfDaemons, levelOfNewDaemon);
+
+      return res.json(newDaemon);
+    } else {
+      return res
+        .status(404)
+        .json({ error: "No existe esa combinacion de razas" });
+    }
   } catch (error) {
     console.error(error);
   }
 };
 
-async function getDaemon(id_daemon) {
+//Obtener demonio dado un id
+async function getDaemon(idDaemon) {
   const { rows } = await pool.query(`SELECT * FROM daemon WHERE id = $1`, [
-    id_daemon,
+    idDaemon,
   ]);
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "Demonio no encontrada" });
-  }
-  res.json(rows[0]);
+
+  return rows[0];
 }
 
-async function getDaemonRace(id_race) {
-  const { rows } = await pool.query(`SELECT * FROM race WHERE id = $1`, [
-    id_race,
-  ]);
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "Demonio no encontrada" });
+//Calcular el nivel del siguiente demonio (literal o el mas cercano a este)
+async function calculateLevel(level1, level2) {
+  let result = (level1 + level2) / 2;
+  if (result % 1 !== 0) {
+    result = Math.ceil(result);
   }
-  res.json(rows[0]);
+  return result;
 }
 
-async function calculateLevel(level1, level2){
-    
+//Obtener la raza resultante de la "suma" de dos razas
+async function getResultingRace(race1, race2) {
+  const { rows } = await pool.query(
+    `SELECT * FROM race_fusions WHERE race1_id = $1 AND race2_id = $2`,
+    [race1, race2],
+  );
+  console.log(rows);
+  if (rows.length === 0) {
+    return 0;
+  }
+
+  return rows[0].result_race_id;
+}
+
+//Obtener los demonios dada una raza
+async function getDaemonsFromRace(race) {
+  const { rows } = await pool.query(`SELECT * FROM daemon WHERE race_id = $1`, [
+    race,
+  ]);
+
+  return rows;
+}
+
+//Resultado del caclulo de demonios/Demonio seleccionado
+async function calculatedDaemon(listOfDaemons, calculatedLevel) {
+  // 1. Filtramos solo los que tienen nivel igual o mayor al calculado
+  const candidates = listOfDaemons.filter((p) => p.level >= calculatedLevel);
+
+  // 2. Si hay candidatos, buscamos el que tenga el nivel más bajo de ese grupo
+  if (candidates.length > 0) {
+    return candidates.sort((a, b) => a.level - b.level)[0];
+  }
+
+  // 3. Fallback: Si el nivel calculado es mayor a todos, SMT 1 suele devolver
+  return listOfDaemons.sort((a, b) => b.level - a.level)[0];
 }

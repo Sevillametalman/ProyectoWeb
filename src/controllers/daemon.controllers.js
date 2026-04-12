@@ -44,7 +44,7 @@ export const createDemon = async (req, res) => {
   try {
     const {
       name,
-      race,
+      race_id,
       level,
       HP,
       MP,
@@ -57,10 +57,10 @@ export const createDemon = async (req, res) => {
     } = req.body;
 
     const result = await pool.query(
-      `INSERT INTO daemon(name, race, level, HP, MP, strength, intelligence, magic, vitality, agility, luck) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      `INSERT INTO daemon(name, race_id, level, HP, MP, strength, intelligence, magic, vitality, agility, luck) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
       [
         name,
-        race,
+        race_id,
         level,
         HP,
         MP,
@@ -88,7 +88,7 @@ export const editDaemonByName = async (req, res) => {
   try {
     const { name } = req.params;
     const {
-      race,
+      race_id,
       level,
       HP,
       MP,
@@ -101,9 +101,9 @@ export const editDaemonByName = async (req, res) => {
     } = req.body;
 
     const result = await pool.query(
-      `UPDATE daemon SET race = $1, level = $2, HP = $3, MP = $4, strength = $5, intelligence = $6, magic = $7, vitality = $8, agility = $9, luck = $10 WHERE name = $11 RETURNING *`,
+      `UPDATE daemon SET race_id = $1, level = $2, HP = $3, MP = $4, strength = $5, intelligence = $6, magic = $7, vitality = $8, agility = $9, luck = $10 WHERE name = $11 RETURNING *`,
       [
-        race,
+        race_id,
         level,
         HP,
         MP,

@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.routes.js";
 import daemonRoutes from "./routes/daemon.routes.js";
 import daemonUserRoutes from "./routes/daemonUsers.routes.js";
 import racesRoutes from "./routes/races.routes.js";
+import calculatorRouters from "./routes/calculator.routes.js";
 
 const app = express();
 app.use(morgan("dev"));
@@ -22,6 +23,7 @@ app.use("/users", userRoutes); // Rutas de usuarios
 app.use("/daemon", daemonRoutes); // Rutas de demonios
 app.use("/daemonUseers", daemonUserRoutes); //Rutas para asignar/desasignar demonios a usuarios
 app.use("/races", racesRoutes); // Rutas para consultar razas
+app.use("/calculator", calculatorRouters) //
 
 app.listen(PORT);
 console.log("Server on port", PORT);
