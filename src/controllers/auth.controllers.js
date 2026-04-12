@@ -35,7 +35,7 @@ export const login = async (req, res) => {
 
     // 1. Buscar el usuario en la base de datos
     const { rows } = await pool.query(
-      "SELECT * FROM admins WHERE username = $1",
+      "SELECT * FROM USERS WHERE username = $1",
       [username],
     );
 
@@ -66,13 +66,13 @@ export const login = async (req, res) => {
 
     // 5. Responder con los datos útiles (evita enviar la contraseña de vuelta)
     res.json({
+      token,
       message: "Login exitoso",
       user: {
         username: user.username,
       },
     });
   } catch (error) {
-    console.error(error);
     res
       .status(500)
       .json({ error: "Error en el servidor al intentar iniciar sesión" });
