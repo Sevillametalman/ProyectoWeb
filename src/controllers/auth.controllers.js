@@ -1,8 +1,9 @@
 import pool from "../db.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // En producción, esto DEBE venir de variables de entorno (process.env.JWT_SECRET)
-const SECRET_KEY = "cat";
+const SECRET_KEY = process.env.JWT_SECRET || "cat";
 
 // Middleware para verificar JWT desde cookie
 function verifyJWT(req, res, next) {
@@ -45,10 +46,10 @@ export const login = async (req, res) => {
 
     const user = rows[0];
 
-    // 2. Verificar la contraseña
-    // NOTA: Aquí estoy comparando texto plano. En un proyecto real DEBES usar bcrypt:
-    // const isValid = await bcrypt.compare(password, user.password);
-    if (user.password !== password) {
+
+    // 2. Verificar la contraseña usando bcrypt
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
