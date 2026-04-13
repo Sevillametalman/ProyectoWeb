@@ -34,6 +34,12 @@ export const deleteUser = (id) =>
     method: "DELETE",
     headers: authHeaders(),
   }).then((r) => r.json());
+export const updateUser = (id, data) =>
+  fetch(`${BASE_URL}/users/${id}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
 
 // ── Daemons ───────────────────────────────────────────
 export const getDaemons = () =>

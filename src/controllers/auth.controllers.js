@@ -70,6 +70,8 @@ export const login = async (req, res) => {
       message: "Login exitoso",
       user: {
         username: user.username,
+        admin: user.admin,
+        id: user.id,
       },
     });
   } catch (error) {

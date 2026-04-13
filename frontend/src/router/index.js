@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "@/views/loginView.vue";
 import DashboardView from "@/views/DashboardView.vue";
+import Profile from "@/views/profile.vue";
 
 const routes = [
   {
@@ -8,6 +9,12 @@ const routes = [
     name: "login",
     component: LoginView,
     meta: { public: true },
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: Profile,
+    meta: { requiresAuth: true },
   },
   {
     path: "/",

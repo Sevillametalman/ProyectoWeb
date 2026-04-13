@@ -82,11 +82,20 @@ export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { username, password, admin } = req.body;
-
-    const result = await pool.query(
-      `UPDATE users SET username = $1, password = $2, admin = $3 WHERE id = $4 RETURNING *`,
-      [username, password, admin, id],
-    );
+    console.log("ID:", id);
+    console.log("Datos recibidos:", username, password, admin);
+    let result;
+    if (password) {
+      result = await pool.query(
+        `UPDATE users SET username = $1, password = $2, admin = $3 WHERE id = $4 RETURNING *`,
+        [username, password, admin, id],
+      );
+    } else {
+      result = await pool.query(
+        `UPDATE users SET username = $1, admin = $2 WHERE id = $3 RETURNING *`,
+        [username, admin, id],
+      );
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Persona no encontrada" });
