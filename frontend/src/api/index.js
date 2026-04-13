@@ -88,3 +88,12 @@ export const getRaceById = (id) =>
   );
 export const getAllRaces = () =>
   fetch(`${BASE_URL}/races`, { headers: authHeaders() }).then((r) => r.json());
+
+// ── Calculadora ─────────────────────────────────────────
+export const getBattleResult = (id1, id2) =>
+  fetch(`${BASE_URL}/calculator/${id1}/${id2}`, {
+    headers: authHeaders(),
+  }).then((r) => {
+    if (!r.ok) throw new Error("Error en el cálculo de la arena");
+    return r.json();
+  });

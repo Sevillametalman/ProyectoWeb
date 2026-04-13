@@ -4,6 +4,7 @@ import DashboardView from "@/views/DashboardView.vue";
 import Profile from "@/views/profile.vue";
 import Users from "@/views/users.vue";
 import User from "@/views/user.vue";
+import Calculadora from "@/views/calculadora.vue";
 
 const routes = [
   {
@@ -28,6 +29,12 @@ const routes = [
     path: "/user/:id",
     name: "user",
     component: User,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/calculadora",
+    name: "calculadora",
+    component: Calculadora,
     meta: { requiresAuth: true },
   },
   {
