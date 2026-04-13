@@ -71,3 +71,12 @@ export const deleteDaemon = (id) =>
     method: "DELETE",
     headers: authHeaders(),
   }).then((r) => r.json());
+export const getDaemonsByUserId = (user_id) =>
+  fetch(`${BASE_URL}/daemonUsers/${user_id}`, { headers: authHeaders() }).then(
+    (r) => r.json(),
+  );
+// ── races ───────────────────────────────────────────
+export const getRaceById = (id) =>
+  fetch(`${BASE_URL}/races/id/${id}`, { headers: authHeaders() }).then((r) =>
+    r.json(),
+  );

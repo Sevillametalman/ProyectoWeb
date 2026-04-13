@@ -28,11 +28,17 @@
       >
         <!-- Solo admin -->
         <div
-          v-if="user.admin"
+          v-if="user.admin && _user.id !== user.id"
           @click="handleModal('Delete', true, _user.id)"
           class="absolute top-2 right-2 text-red-300 cursor-pointer w-6 h-6 text-center hover:text-red-500 transition-colors duration-300 flex items-center justify-center"
         >
-          X
+          <span>X</span>
+        </div>
+        <div
+          v-if="_user.id == user.id "
+          class="absolute top-2 right-2 w-6 h-6 text-center flex items-center justify-center text-[#00ffaa]"
+        >
+          Tu
         </div>
         <router-link
           :to="{ name: 'user', params: { id: _user.id } }"
@@ -77,11 +83,18 @@
             <h3>Daemons</h3>
             <div class="flex overflow-hidden gap-2 mt-1">
               <span
-                v-for="value in [1, 2, 3]"
-                :key="value"
+                v-if="_user && _user.daemons?.length"
+                v-for="dameon in _user.daemons || []"
+                :key="dameon.id"
                 class="shrink-0 border border-[#00e5a0] px-3 font-mono text-md font-medium tracking-tight text-white overflow-hidden max-w-30 whitespace-nowrap"
               >
-                name daemons # {{ value }}
+                {{ dameon.name }}
+              </span>
+              <span
+                v-else
+                class="border border-[#1f2937] px-3 font-mono text-md font-medium tracking-tight text-gray-500"
+              >
+                No tiene daemons asociados
               </span>
             </div>
           </div>
@@ -123,9 +136,10 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { getUsers, createUser, deleteUser } from "@/api/index.js";
+import { getUsers, getDaemonsByUserId, deleteUser } from "@/api/index.js";
 import { useAuth } from "@/stores/auth.js";
 import formCreateUser from "@/components/formCreateUser.vue";
+
 const { user } = useAuth();
 const users = ref([]);
 const filtered = ref([]);
@@ -144,6 +158,12 @@ async function fetchUsers() {
   try {
     users.value = await getUsers();
     filtered.value = [...users.value];
+
+    /* get daemons by filtered */
+    for (let i = 0; i < filtered.value.length; i++) {
+      const daemons = await getDaemonsByUserId(filtered.value[i].id);
+      filtered.value[i].daemons = daemons;
+    }
   } catch {
     error.value = "No se pudo conectar con el servidor.";
   } finally {

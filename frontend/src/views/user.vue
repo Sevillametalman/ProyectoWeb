@@ -2,7 +2,7 @@
   <div class="container mx-auto mt-4">
     <div class="page-header">
       <div class="header-left">
-        <button class="btn-back" @click="router.push({ name: 'dashboard' })">
+        <button class="btn-back" @click="router.push({ name: 'users' })">
           ← volver
         </button>
         <div class="header-title">
@@ -39,81 +39,89 @@
       >
         <!-- card -->
         <div
-          v-for="value in [1, 2, 3]"
-          :key="value"
-          class="bg-[#0f141b] border border-[#1f2937] relative flex p-6 shadow-lg h-52 hover:scale-105 transition-all duration-300 rounded-lg"
+          v-if="user && user.daemons?.length"
+          v-for="daemon in user.daemons || []"
+          :key="daemon.id"
+          class="bg-[#0f141b] border border-[#1f2937] relative flex p-6 shadow-lg h-56 hover:scale-105 transition-all duration-300 rounded-lg"
         >
-          <div class="absolute">
-            <span class="badge-race">raza: </span>
+          <div class="absolute top-5 left-3">
+            <span class="badge-race text-amber-400! border-[#1f2937]!"
+              >raza: {{ daemon.race?.name }}
+            </span>
           </div>
 
           <div
-            class="p-4 border-r border-[#1f2937] w-1/2 flex flex-col items-center relative"
+            class="p-4 border-r border-[#1f2937] w-1/2 flex flex-col items-center relative mt-4"
           >
             <span class="text-6xl"> ◎ </span>
-            <p>name</p>
+            <p>{{ daemon.name }}</p>
             <p
               class="text-green-500 absolute border border-[#1f2937] p-1 bottom-0 right-6 text-sm"
             >
-              Level:
+              Level:{{ daemon.level }}
             </p>
           </div>
-          <div class="p-4 w-1/2">
+          <div class="py-4 w-2/3">
             <!-- 2 rows 2 colunms -->
-            <div class="flex justify-between mb-4">
+            <div class="flex justify-between mb-4 ml-6">
               <div class="">
-                <span class="text-sm">HP:10</span>
+                <span class="text-sm">HP:{{ daemon.hp }}</span>
                 <div class="bg-red-500 w-16 h-4 relative rounded-full">
                   <span
-                    class="absolute text-xs inset-0 flex items-center justify-center"
+                    class="absolute text-xs inset-0 flex items-center justify-center text-black"
                   >
-                    10
+                    {{ daemon.hp }}
                   </span>
                 </div>
               </div>
               <div class="">
-                <span class="text-sm">MP:10</span>
+                <span class="text-sm">MP:{{ daemon.mp }}</span>
                 <div class="bg-blue-500 w-16 h-4 relative rounded-full">
                   <span
-                    class="absolute text-xs inset-0 flex items-center justify-center"
+                    class="absolute text-xs inset-0 flex items-center justify-center text-black"
                   >
-                    10
+                    {{ daemon.mp }}
                   </span>
                 </div>
               </div>
             </div>
-            <div class="flex justify-center mb-2">
+            <div class="flex justify-center mb-2 ml-6">
               <span class="text-sm text-white border border-[#1f2937] p-1"
                 >Estadisticas</span
               >
             </div>
-            <div class="grid grid-cols-2">
+            <div class="grid grid-cols-2 w-full ml-6">
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Strength:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{ daemon.strength }}</span>
               </div>
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Intelligence:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{
+                  daemon.intelligence
+                }}</span>
               </div>
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Magic:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{ daemon.magic }}</span>
               </div>
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Vitality:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{ daemon.vitality }}</span>
               </div>
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Agility:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{ daemon.agility }}</span>
               </div>
               <div class="flex gap-1">
                 <span class="text-sm text-gray-400">Luck:</span>
-                <span class="text-sm">10</span>
+                <span class="text-sm text-blue-400">{{ daemon.luck }}</span>
               </div>
             </div>
           </div>
+        </div>
+        <div v-else class="p-4 text-gray-500">
+          Este usuario no tiene daemons asociados.
         </div>
       </div>
     </div>
@@ -121,7 +129,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { getUserById } from "@/api/index.js";
+import { getUserById, getDaemonsByUserId, getRaceById } from "@/api/index.js";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -132,6 +140,20 @@ async function fetchUser() {
   try {
     const data = await getUserById(id);
     user.value = data;
+
+    // Obtener los daemons asociados al usuario
+    if (user.value.id) {
+      const daemons = await getDaemonsByUserId(user.value.id);
+      user.value.daemons = daemons;
+    }
+    /* get race */
+    if (user.value.daemons) {
+      for (let i = 0; i < user.value.daemons.length; i++) {
+        const daemon = user.value.daemons[i];
+        const race = await getRaceById(daemon.id);
+        user.value.daemons[i].race = race;
+      }
+    }
   } catch (error) {
     console.error("Error fetching user:", error);
     // Manejar el error, por ejemplo, mostrando un mensaje o redirigiendo
