@@ -5,6 +5,6 @@ const router = Router();
 
 router.get("/:user_id", getDaemonByUserId);
 router.post("/:user_id/:daemon_id", asignDaemonToUser);
-router.post("/:user_id/:daemon_id", unasignDaemonToUser);
+router.delete("/:user_id/:daemon_id", unasignDaemonToUser);
 
 export default router;
