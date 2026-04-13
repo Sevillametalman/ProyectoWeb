@@ -21,6 +21,10 @@ export const login = (credentials) =>
 // ── Usuarios ──────────────────────────────────────────
 export const getUsers = () =>
   fetch(`${BASE_URL}/users`, { headers: authHeaders() }).then((r) => r.json());
+export const getUserById = (id) =>
+  fetch(`${BASE_URL}/users/${id}`, { headers: authHeaders() }).then((r) =>
+    r.json(),
+  );
 
 export const createUser = (data) =>
   fetch(`${BASE_URL}/users`, {

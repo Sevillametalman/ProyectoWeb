@@ -1,10 +1,13 @@
 <template>
   <div class="app">
     <!-- Topbar -->
-    <header v-if="router.currentRoute.value.name !== 'login'" class="topbar">
+    <header
+      v-if="router.currentRoute.value.name !== 'login'"
+      class="topbar h-20!"
+    >
       <div class="brand">
         <span class="brand-icon">⬡</span>
-        <span class="brand-name">ProyectoWeb</span>
+        <span class="brand-name text-base!">ProyectoWeb</span>
         <span class="brand-ver">v1.0</span>
       </div>
 
@@ -17,7 +20,7 @@
             }"
           >
             <span>Daemons</span>
-            <span>◈</span>
+            <span>◎</span>
           </div>
         </router-link>
         <router-link to="/calculadora">
@@ -29,6 +32,17 @@
             }"
           >
             <span>Calculadora</span>
+            <span>◎</span>
+          </div>
+        </router-link>
+        <router-link to="/users">
+          <div
+            class="nav-tab"
+            :class="{
+              'nav-tab--active': router.currentRoute.value.name === 'users',
+            }"
+          >
+            <span>Usuarios</span>
             <span>◈</span>
           </div>
         </router-link>
@@ -91,17 +105,7 @@ onMounted(() => {
 onUnmounted(() => clearInterval(timer));
 </script>
 
-<style>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body,
+<style scoped>
 #app {
   height: 100%;
   font-family: "JetBrains Mono", monospace;
@@ -125,7 +129,7 @@ body,
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   background: #0f1218;
   color: #c8d0dc;
 }
@@ -136,7 +140,6 @@ body,
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  height: 52px;
   background: #0d1117;
   border-bottom: 1px solid #1e2530;
   flex-shrink: 0;
