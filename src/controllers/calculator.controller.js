@@ -51,16 +51,26 @@ async function calculateLevel(level1, level2) {
 
 //Obtener la raza resultante de la "suma" de dos razas
 async function getResultingRace(race1, race2) {
-  const { rows } = await pool.query(
+  // Intentar primero (race1, race2)
+  let { rows } = await pool.query(
     `SELECT * FROM race_fusions WHERE race1_id = $1 AND race2_id = $2`,
-    [race1, race2],
+    [race1, race2]
   );
-  console.log(rows);
-  if (rows.length === 0) {
-    return 0;
+  if (rows.length > 0) {
+    return rows[0].result_race_id;
   }
 
-  return rows[0].result_race_id;
+  // Si no existe, intentar el orden inverso (race2, race1)
+  ({ rows } = await pool.query(
+    `SELECT * FROM race_fusions WHERE race1_id = $1 AND race2_id = $2`,
+    [race2, race1]
+  ));
+  if (rows.length > 0) {
+    return rows[0].result_race_id;
+  }
+
+  // Si no existe ninguna combinación
+  return 0;
 }
 
 //Obtener los demonios dada una raza
