@@ -44,9 +44,10 @@
       />
     </div>
   </div>
+
   <button
     @click="handleCreateUser"
-    class="border border-[#00e5a0] cursor-pointer hover:border-[#00e5a0]/80 py-2"
+    class="border border-[#1f2937] cursor-pointer hover:border-[#00e5a0]/80 py-2"
   >
     Agregar usuario
   </button>

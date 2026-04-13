@@ -35,7 +35,7 @@
           <span>X</span>
         </div>
         <div
-          v-if="_user.id == user.id "
+          v-if="_user.id == user.id"
           class="absolute top-2 right-2 w-6 h-6 text-center flex items-center justify-center text-[#00ffaa]"
         >
           Tu
@@ -121,13 +121,21 @@
               ¿ Estas seguro que deseas eliminar este usuario ?
             </span>
             <formCreateUser v-else @updateUsers="updateUsers"></formCreateUser>
-            <button
-              v-if="modalType == 'Delete'"
-              @click="handleDelete()"
-              class="border border-red-300 cursor-pointer hover:border-red-500 py-2"
-            >
-              Eliminar
-            </button>
+            <div class="flex gap-2 justify-center">
+              <button
+                @click="modalOpen = false"
+                class="border border-[#1f2937] cursor-pointer hover:border-[#1f2937]/80 py-2 px-1"
+              >
+                Cancelar
+              </button>
+              <button
+                v-if="modalType == 'Delete'"
+                @click="handleDelete()"
+                class="border border-[#1f2937] cursor-pointer hover:border-red-500 py-2 px-1"
+              >
+                Eliminar Usuario
+              </button>
+            </div>
           </div>
         </div>
       </div>

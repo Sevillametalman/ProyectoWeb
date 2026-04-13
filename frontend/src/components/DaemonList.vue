@@ -14,7 +14,11 @@
           placeholder="buscar Daemons..."
           @input="filterDaemons"
         />
-        <button class="btn-primary" @click="showForm = !showForm">
+        <button
+          v-if="user.admin"
+          class="btn-primary"
+          @click="showForm = !showForm"
+        >
           {{ showForm ? "✕ cancelar" : "+ spawn" }}
         </button>
         <button class="btn-ghost" @click="fetchDaemons">↺ sync</button>
@@ -26,30 +30,142 @@
       <div v-if="showForm" class="spawn-form">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">nombre del Daemons</label>
-            <input
-              v-model="newDaemon.name"
-              class="form-input"
-              placeholder="ej: worker-01"
-            />
+            <label class="form-label text-base! text-white!"
+              >Nombre del Daemons</label
+            >
+            <input v-model="newDaemon.name" class="form-input" placeholder="" />
           </div>
           <div class="form-group">
-            <label class="form-label">Tipo</label>
-            <input v-model="newDaemon.description" class="form-input" />
+            <label class="form-label text-base! text-white!">Raza</label>
+
+            <div class="form-group">
+              <select v-model="newDaemon.race_id" class="form-input">
+                <option v-for="race in races" :value="race.id">
+                  {{ race.name }}
+                </option>
+              </select>
+            </div>
           </div>
-          <!-- <div class="form-group form-group--sm">
-            <label class="form-label">estado</label>
-            <select v-model="newDaemon.status" class="form-input">
-              <option value="active">active</option>
-              <option value="idle">idle</option>
-              <option value="stopped">stopped</option>
-            </select>
-          </div> -->
+
           <button class="btn-spawn" :disabled="spawning" @click="spawnDaemon">
-            {{ spawning ? "..." : "spawn" }}
+            spawn
           </button>
         </div>
         <p v-if="formError" class="form-error">⚠ {{ formError }}</p>
+        <div class="mt-4">
+          <div class="flex w-full gap-x-4">
+            <div class="flex flex-col">
+              <div class="flex flex-col pb-1 w-52">
+                <span class="text-gray-500 text-sm">Level:</span>
+                <input
+                  type="number"
+                  v-model="newDaemon.level"
+                  name=""
+                  id=""
+                  value="2"
+                  class="form-input text-center"
+                />
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex flex-col pb-1 w-52">
+                <span class="text-gray-500 text-sm">HP:</span>
+                <input
+                  type="number"
+                  v-model="newDaemon.HP"
+                  name=""
+                  id=""
+                  value="2"
+                  class="form-input text-center"
+                />
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex flex-col pb-1 w-52">
+                <span class="text-gray-500 text-sm">MP:</span>
+                <input
+                  type="number"
+                  v-model="newDaemon.MP"
+                  name=""
+                  id=""
+                  value="2"
+                  class="form-input text-center"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <span class="">Estadisticas</span>
+          <div class="grid grid-cols-2 gap-y-2 mt-4 justify-items-center">
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Strength:</span>
+              <input
+                type="number"
+                v-model="newDaemon.strength"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Intelligence:</span>
+              <input
+                type="number"
+                v-model="newDaemon.intelligence"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Magic:</span>
+              <input
+                type="number"
+                v-model="newDaemon.magic"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Vitality:</span>
+              <input
+                type="number"
+                v-model="newDaemon.vitality"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Agility:</span>
+              <input
+                type="number"
+                v-model="newDaemon.agility"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+            <div class="flex flex-col items-center pb-1 w-52">
+              <span class="text-gray-500 text-sm">Luck:</span>
+              <input
+                type="number"
+                v-model="newDaemon.luck"
+                name=""
+                id=""
+                value="2"
+                class="form-input ml-3 text-center"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </transition>
 
@@ -72,42 +188,44 @@
     </div>
 
     <!-- Daemon Table -->
-    <div v-else class="daemon-table">
-      <div class="table-header">
+    <div v-else class="daemon-table h-96! overflow-auto!">
+      <div class="table-header text-base!">
         <span>ID</span>
         <span>NOMBRE</span>
-        <span>DESCRIPCIÓN</span>
-        <span>ESTADO</span>
+        <span>RAZA</span>
+        <span>LEVEl</span>
         <span>ACCIONES</span>
       </div>
       <transition-group name="row" tag="div">
-        <div
-          v-for="daemon in filtered"
-          :key="daemon.id"
-          class="table-row"
-          :class="`row--${daemon.status || 'idle'}`"
-        >
-          <span class="cell cell--id">#{{ daemon.id }}</span>
-          <span class="cell cell--name">{{ daemon.name }}</span>
-          <span class="cell cell--desc">{{ daemon.description || "—" }}</span>
+        <div v-for="daemon in filtered" :key="daemon.id" class="table-row">
+          <span class="cell text-base!">#{{ daemon.id }}</span>
+          <span class="cell cell--name text-base!">{{ daemon.name }}</span>
+          <span class="cell cell--desc text-base!">{{ daemon.race.name }}</span>
           <span class="cell">
-            <span
-              class="status-badge"
-              :class="`badge--${daemon.status || 'idle'}`"
-            >
-              {{ daemon.status || "idle" }}
+            <span class="border border-[#1e2530] p-1 text-[#00ffaa] text-base">
+              {{ daemon.level }}
             </span>
           </span>
           <span class="cell cell--actions">
             <button
-              class="btn-icon text-white!"
+              class="btn-icon text-white! text-xl! hover:text-[#0090ff]!"
               title="Ver detalle"
               @click="viewDaemon(daemon)"
             >
-              ⊕
+              ◎
             </button>
             <button
-              class="btn-icon btn-icon--danger text-white!"
+              v-if="user.admin"
+              class="btn-icon btn-icon--danger text-white! text-xl! hover:text-[#00ffaa]!"
+              title="Eliminar"
+              @click="editDaemonModal(daemon.id)"
+            >
+              ✎
+            </button>
+
+            <button
+              v-if="user.admin"
+              class="btn-icon btn-icon--danger text-white! text-xl! hover:text-[#ff4466]!"
               title="Eliminar"
               @click="killDaemon(daemon.id)"
             >
@@ -117,27 +235,289 @@
         </div>
       </transition-group>
     </div>
+    <div class="daemon-table h-96! overflow-auto mt-4">
+      <div class="p-4">
+        <div class="header-left">
+          <span class="status-dot" :class="{ active: !loading }"></span>
+          <span class="panel-title">RAZAs MONITOR</span>
+          <span class="pid-badge">PID::{{ races.length }}</span>
+        </div>
+      </div>
+      <div class="table-header text-base!">
+        <span>ID</span>
+        <span>Raza</span>
+      </div>
+      <transition-group name="row" tag="div">
+        <div v-for="race in races" :key="race.id" class="table-row">
+          <span class="cell text-base!">#{{ race.id }}</span>
+          <span class="cell cell--name text-base!">{{ race.name }}</span>
+        </div>
+      </transition-group>
+    </div>
 
     <!-- Detail Modal -->
     <transition name="fade">
-      <div
-        v-if="selectedDaemon"
-        class="modal-overlay"
-        @click.self="selectedDaemon = null"
-      >
+      <div v-if="viewModal && selectedDaemon" class="modal-overlay">
         <div class="modal">
           <div class="modal-header">
             <span>Daemon :: {{ selectedDaemon.name }}</span>
-            <button class="btn-icon" @click="selectedDaemon = null">✕</button>
+            <button
+              class="btn-icon"
+              @click="
+                selectedDaemon = null;
+                viewModal = false;
+              "
+            >
+              ✕
+            </button>
           </div>
           <div class="modal-body">
-            <div
-              v-for="(val, key) in selectedDaemon"
-              :key="key"
-              class="modal-row"
+            <daemonV :daemon="selectedDaemon"></daemonV>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div v-if="deleteModal && selectedDaemon" class="modal-overlay">
+        <div class="modal">
+          <div class="modal-header text-red-500!">
+            <span>Daemon :: {{ selectedDaemon.name }} </span>
+            <button
+              class="btn-icon"
+              @click="
+                selectedDaemon = null;
+                deleteModal = false;
+              "
             >
-              <span class="modal-key">{{ key }}</span>
-              <span class="modal-val">{{ val }}</span>
+              ✕
+            </button>
+          </div>
+          <div class="modal-body">
+            <span class="text-center">
+              ¿ Estas seguro que deseas eliminar este daemon ?
+            </span>
+            <div class="flex gap-2 justify-center">
+              <button
+                @click="
+                  selectedDaemon = null;
+                  deleteModal = false;
+                "
+                class="border border-[#1f2937] cursor-pointer hover:border-[#1f2937]/80 py-2 px-1"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="handleDelete()"
+                class="border border-[#1f2937] cursor-pointer hover:border-red-500 py-2 px-1"
+              >
+                Eliminar Daemon
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div v-if="editModal && selectedDaemon" class="modal-overlay">
+        <div class="modal">
+          <div class="modal-header text-[#00ffaa]!">
+            <span>Daemon :: {{ selectedDaemon.name }} </span>
+            <button
+              class="btn-icon"
+              @click="
+                selectedDaemon = null;
+                editModal = false;
+              "
+            >
+              ✕
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="p-6">
+              <div class="flex items-center gap-5 mb-6">
+                <div
+                  class="relative w-20 h-20 bg-[#151b23] border border-[#1f2937] flex items-center justify-center shadow-inner"
+                >
+                  <span
+                    class="text-[#00d8ff] opacity-50 text-3xl tracking-widest"
+                    >◎</span
+                  >
+                  <div
+                    class="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#00d8ff]"
+                  ></div>
+                  <div
+                    class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#00d8ff]"
+                  ></div>
+                </div>
+
+                <div class="grow">
+                  <div class="flex justify-between items-end mb-1">
+                    <h2
+                      class="text-base font-bold text-gray-100 uppercase tracking-wide"
+                    >
+                      Nombre:{{ selectedDaemon.name }}
+                    </h2>
+
+                    <span class="text-gray-600 text-xs"
+                      >ID #{{ selectedDaemon.id }}</span
+                    >
+                  </div>
+                  <p class="text-gray-400 text-xs mb-2">
+                    Raza:
+                    <span class="text-gray-200">{{
+                      selectedDaemon.race?.name
+                    }}</span>
+                  </p>
+                  Level:
+                  <input
+                    class="form-input"
+                    type="number"
+                    v-model="selectedDaemon.level"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="w-full border-t border-dashed border-[#1f2937] my-5"
+              ></div>
+
+              <div class="space-y-4 mb-6">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-gray-500 tracking-wider"
+                      >HP
+                      <span class="text-gray-700">
+                        <input
+                          class="form-input"
+                          type="number"
+                          v-model="selectedDaemon.hp"
+                        /> </span
+                    ></span>
+                    <span class="text-[#00ffaa] font-bold"
+                      >{{ selectedDaemon.hp }} / {{ selectedDaemon.hp }}</span
+                    >
+                  </div>
+                  <div
+                    class="w-full bg-[#151b23] h-1.5 border border-[#1f2937]"
+                  >
+                    <div
+                      class="bg-[#00ffaa] h-full shadow-[0_0_5px_#00ffaa]"
+                      style="width: 100%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-gray-500 tracking-wider"
+                      >MP
+                      <span class="text-gray-700">
+                        <input
+                          class="form-input"
+                          type="number"
+                          v-model="selectedDaemon.mp"
+                        /> </span
+                    ></span>
+                    <span class="text-[#3b82f6] font-bold"
+                      >{{ selectedDaemon.mp }} / {{ selectedDaemon.mp }}</span
+                    >
+                  </div>
+                  <div
+                    class="w-full bg-[#151b23] h-1.5 border border-[#1f2937]"
+                  >
+                    <div
+                      class="bg-[#3b82f6] h-full shadow-[0_0_5px_#3b82f6] w-full"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-[#0f141b] border border-[#1f2937] p-4">
+                <div class="grid grid-cols-2 gap-x-8 gap-y-3">
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Strength</span>
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.strength"
+                    />
+                  </div>
+
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Intelligence</span>
+
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.intelligence"
+                    />
+                  </div>
+
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Magic</span>
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.magic"
+                    />
+                  </div>
+
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Vitality</span>
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.vitality"
+                    />
+                  </div>
+
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Agility</span>
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.agility"
+                    />
+                  </div>
+
+                  <div
+                    class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                  >
+                    <span class="text-gray-500 text-xs">Luck</span>
+                    <input
+                      class="form-input w-20! text-end!"
+                      type="number"
+                      v-model="selectedDaemon.luck"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2 justify-center">
+              <button
+                @click="
+                  selectedDaemon = null;
+                  editModal = false;
+                "
+                class="border border-[#1f2937] cursor-pointer hover:border-[#1f2937]/80 py-2 px-1"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="handleEdit()"
+                class="border border-[#1f2937] cursor-pointer hover:border-[#00ffaa] py-2 px-1"
+              >
+                Editar Daemon
+              </button>
             </div>
           </div>
         </div>
@@ -148,7 +528,17 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getDaemons, createDaemon, deleteDaemon } from "@/api/index.js";
+import daemonV from "@/components/ViewDaemon.vue";
+import { useAuth } from "@/stores/auth.js";
+const { user } = useAuth();
+
+import {
+  getDaemons,
+  createDaemon,
+  deleteDaemon,
+  editDaemon,
+  getAllRaces,
+} from "@/api/index.js";
 
 const daemons = ref([]);
 const filtered = ref([]);
@@ -159,8 +549,24 @@ const showForm = ref(false);
 const spawning = ref(false);
 const formError = ref(null);
 const selectedDaemon = ref(null);
+const races = ref([]);
+const deleteModal = ref(false);
+const viewModal = ref(false);
+const editModal = ref(false);
 
-const newDaemon = ref({ name: "", description: "", status: "active" });
+const newDaemon = ref({
+  name: "",
+  race_id: 0,
+  level: 10,
+  HP: 10,
+  MP: 10,
+  strength: 10,
+  intelligence: 10,
+  magic: 10,
+  vitality: 10,
+  agility: 10,
+  luck: 10,
+});
 
 async function fetchDaemons() {
   loading.value = true;
@@ -168,6 +574,14 @@ async function fetchDaemons() {
   try {
     daemons.value = await getDaemons();
     filtered.value = [...daemons.value];
+
+    /* obtener razas */
+    races.value = await getAllRaces();
+    for (let i = 0; i < filtered.value.length; i++) {
+      const daemon = filtered.value[i];
+      const race = races.value.find((r) => r.id === daemon.race_id);
+      filtered.value[i].race = race || { name: "Desconocida", id: -1 };
+    }
   } catch (e) {
     error.value = "No se pudo conectar con el servidor.";
   } finally {
@@ -183,17 +597,43 @@ function filterDaemons() {
       d.description?.toLowerCase().includes(q),
   );
 }
+function validateInteger() {
+  const { name, ...validar } = newDaemon.value;
+
+  return Object.values(validar).every((value) => Number.isInteger(value));
+}
+function validateIntegerEdit() {
+  const { name, race, ...validar } = selectedDaemon.value;
+  /* console.log(validar); */
+  return Object.values(validar).every((value) => Number.isInteger(value));
+}
 
 async function spawnDaemon() {
   formError.value = null;
   if (!newDaemon.value.name.trim()) {
-    formError.value = "El nombre del proceso es requerido.";
+    formError.value = "El nombre es requerido.";
+    return;
+  }
+  if (!validateInteger()) {
+    formError.value = "El campo debe ser un entero";
     return;
   }
   spawning.value = true;
   try {
     await createDaemon(newDaemon.value);
-    newDaemon.value = { name: "", description: "", status: "active" };
+    newDaemon.value = {
+      name: "",
+      race_id: 0,
+      level: 10,
+      HP: 10,
+      MP: 10,
+      strength: 10,
+      intelligence: 10,
+      magic: 10,
+      vitality: 10,
+      agility: 10,
+      luck: 10,
+    };
     showForm.value = false;
     await fetchDaemons();
   } catch (e) {
@@ -203,24 +643,74 @@ async function spawnDaemon() {
   }
 }
 
-async function killDaemon(id) {
-  if (!confirm(`¿Terminar proceso #${id}?`)) return;
+function killDaemon(id) {
+  deleteModal.value = true;
+  selectedDaemon.value = daemons.value.find((d) => d.id === id);
+}
+function editDaemonModal(id) {
+  editModal.value = true;
+  selectedDaemon.value = daemons.value.find((d) => d.id === id);
+}
+async function handleDelete() {
   try {
-    await deleteDaemon(id);
-    await fetchDaemons();
-  } catch {
-    alert("No se pudo eliminar el proceso.");
+    await deleteDaemon(selectedDaemon.value.name);
+  } catch (error) {
+    console.log("error intentando eliminar daemon:", error);
   }
+
+  await fetchDaemons();
+  deleteModal.value = false;
+  selectedDaemon.value = null;
+}
+async function handleEdit() {
+  if (!selectedDaemon.value.name.trim()) {
+    return;
+  }
+  if (!validateIntegerEdit()) {
+    return;
+  }
+  const newDemonEdit = {
+    name: selectedDaemon.value.name,
+    level: selectedDaemon.value.level,
+    HP: selectedDaemon.value.hp,
+    MP: selectedDaemon.value.mp,
+    strength: selectedDaemon.value.strength,
+    intelligence: selectedDaemon.value.intelligence,
+    vitality: selectedDaemon.value.vitality,
+    magic: selectedDaemon.value.magic,
+    agility: selectedDaemon.value.agility,
+    luck: selectedDaemon.value.luck,
+    race_id: selectedDaemon.value.race_id,
+  };
+  try {
+    await editDaemon(newDemonEdit);
+  } catch (error) {
+    console.log("error:", error);
+  }
+
+  editModal.value = false;
 }
 
 function viewDaemon(daemon) {
   selectedDaemon.value = daemon;
+  viewModal.value = true;
 }
 
 onMounted(fetchDaemons);
 </script>
 
 <style scoped>
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -appearance: textfield;
+}
 /* ── Variables ─────────────────────────────── */
 .daemon-panel {
   --bg: transparent;
@@ -456,12 +946,19 @@ onMounted(fetchDaemons);
 /* ── Table ───────────────────────────────── */
 .daemon-table {
   border: 1px solid var(--border);
-  overflow: hidden;
+  overflow: auto;
+}
+.daemon-table::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
+}
+
+.elemento::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 60px 1fr 2fr 100px 90px;
+  grid-template-columns: 60px 1fr 300px 100px 90px;
   padding: 0.5rem 1rem;
   background: var(--surface);
   font-size: 0.65rem;
@@ -472,7 +969,7 @@ onMounted(fetchDaemons);
 
 .table-row {
   display: grid;
-  grid-template-columns: 60px 1fr 2fr 100px 90px;
+  grid-template-columns: 60px 1fr 300px 100px 90px;
   padding: 0.6rem 1rem;
   border-bottom: 1px solid var(--border);
   align-items: center;
@@ -506,7 +1003,7 @@ onMounted(fetchDaemons);
   color: #fff;
 }
 .cell--name {
-  color: #32496b;
+  color: #fff;
   font-weight: 600;
 }
 .cell--desc {

@@ -66,8 +66,8 @@ export const createDaemon = (data) =>
     body: JSON.stringify(data),
   }).then((r) => r.json());
 
-export const deleteDaemon = (id) =>
-  fetch(`${BASE_URL}/daemon/${id}`, {
+export const deleteDaemon = (name) =>
+  fetch(`${BASE_URL}/daemon/name/${name}`, {
     method: "DELETE",
     headers: authHeaders(),
   }).then((r) => r.json());
@@ -75,8 +75,16 @@ export const getDaemonsByUserId = (user_id) =>
   fetch(`${BASE_URL}/daemonUsers/${user_id}`, { headers: authHeaders() }).then(
     (r) => r.json(),
   );
+export const editDaemon = (data) =>
+  fetch(`${BASE_URL}/daemon/name/${data.name}`, {
+    method: "put",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
 // ── races ───────────────────────────────────────────
 export const getRaceById = (id) =>
   fetch(`${BASE_URL}/races/id/${id}`, { headers: authHeaders() }).then((r) =>
     r.json(),
   );
+export const getAllRaces = () =>
+  fetch(`${BASE_URL}/races`, { headers: authHeaders() }).then((r) => r.json());

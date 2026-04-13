@@ -34,24 +34,22 @@
     <!-- daemons -->
     <div class="border rounded-lg border-[#1e2530] mt-4">
       <div class="header-title p-4 text-base!">Daemons del usuario:</div>
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto container"
-      >
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- card -->
         <div
           v-if="user && user.daemons?.length"
           v-for="daemon in user.daemons || []"
           :key="daemon.id"
-          class="bg-[#0f141b] border border-[#1f2937] relative flex p-6 shadow-lg h-56 hover:scale-105 transition-all duration-300 rounded-lg"
+          class="bg-[#0f141b] border border-[#1f2937] relative flex p-6 m-4 shadow-lg hover:scale-105 transition-all duration-300 rounded-lg"
         >
           <div class="absolute top-5 left-3">
             <span class="badge-race text-amber-400! border-[#1f2937]!"
-              >raza: {{ daemon.race?.name }}
+              >Raza: {{ daemon.race?.name }}
             </span>
           </div>
 
           <div
-            class="p-4 border-r border-[#1f2937] w-1/2 flex flex-col items-center relative mt-4"
+            class="p-4 border-r border-[#1f2937] w-1/2 flex flex-col items-center relative mt-[15%]"
           >
             <span class="text-6xl"> ◎ </span>
             <p>{{ daemon.name }}</p>
@@ -63,59 +61,95 @@
           </div>
           <div class="py-4 w-2/3">
             <!-- 2 rows 2 colunms -->
-            <div class="flex justify-between mb-4 ml-6">
-              <div class="">
-                <span class="text-sm">HP:{{ daemon.hp }}</span>
-                <div class="bg-red-500 w-16 h-4 relative rounded-full">
-                  <span
-                    class="absolute text-xs inset-0 flex items-center justify-center text-black"
+            <div class="space-y-4 mb-6 ml-6">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-gray-500 tracking-wider"
+                    >HP <span class="text-gray-700">(Health)</span></span
                   >
-                    {{ daemon.hp }}
-                  </span>
+                  <span class="text-[#00ffaa] font-bold"
+                    >{{ daemon.hp }} / {{ daemon.hp }}</span
+                  >
+                </div>
+                <div class="w-full bg-[#151b23] h-1.5 border border-[#1f2937]">
+                  <div
+                    class="bg-[#00ffaa] h-full shadow-[0_0_5px_#00ffaa]"
+                    style="width: 100%"
+                  ></div>
                 </div>
               </div>
-              <div class="">
-                <span class="text-sm">MP:{{ daemon.mp }}</span>
-                <div class="bg-blue-500 w-16 h-4 relative rounded-full">
-                  <span
-                    class="absolute text-xs inset-0 flex items-center justify-center text-black"
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-gray-500 tracking-wider"
+                    >MP <span class="text-gray-700">(Mana)</span></span
                   >
-                    {{ daemon.mp }}
-                  </span>
+                  <span class="text-[#3b82f6] font-bold"
+                    >{{ daemon.mp }} / {{ daemon.mp }}</span
+                  >
+                </div>
+                <div class="w-full bg-[#151b23] h-1.5 border border-[#1f2937]">
+                  <div
+                    class="bg-[#3b82f6] h-full shadow-[0_0_5px_#3b82f6] w-full"
+                  ></div>
                 </div>
               </div>
             </div>
-            <div class="flex justify-center mb-2 ml-6">
-              <span class="text-sm text-white border border-[#1f2937] p-1"
-                >Estadisticas</span
-              >
-            </div>
-            <div class="grid grid-cols-2 w-full ml-6">
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Strength:</span>
-                <span class="text-sm text-blue-400">{{ daemon.strength }}</span>
-              </div>
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Intelligence:</span>
-                <span class="text-sm text-blue-400">{{
-                  daemon.intelligence
-                }}</span>
-              </div>
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Magic:</span>
-                <span class="text-sm text-blue-400">{{ daemon.magic }}</span>
-              </div>
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Vitality:</span>
-                <span class="text-sm text-blue-400">{{ daemon.vitality }}</span>
-              </div>
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Agility:</span>
-                <span class="text-sm text-blue-400">{{ daemon.agility }}</span>
-              </div>
-              <div class="flex gap-1">
-                <span class="text-sm text-gray-400">Luck:</span>
-                <span class="text-sm text-blue-400">{{ daemon.luck }}</span>
+
+            <div class="bg-[#0f141b] border border-[#1f2937] p-4 w-full ml-3">
+              <div class="grid grid-cols-2 gap-x-2 gap-y-3">
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Strength</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.strength
+                  }}</span>
+                </div>
+
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Intelligence</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.intelligence
+                  }}</span>
+                </div>
+
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Magic</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.magic
+                  }}</span>
+                </div>
+
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Vitality</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.vitality
+                  }}</span>
+                </div>
+
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Agility</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.agility
+                  }}</span>
+                </div>
+
+                <div
+                  class="flex justify-between items-center border-b border-[#1f2937] pb-1"
+                >
+                  <span class="text-gray-500 text-xs">Luck</span>
+                  <span class="text-gray-200 text-sm font-semibold">{{
+                    daemon.luck
+                  }}</span>
+                </div>
               </div>
             </div>
           </div>
