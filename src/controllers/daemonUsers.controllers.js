@@ -1,5 +1,22 @@
 import pool from "../db.js";
 
+export const getDaemonByUserId = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const result = await pool.query(
+      `SELECT d.*, du.level, du.hp, du.mp, du.strength, du.intelligence, du.magic, du.vitality, du.agility, du.luck
+       FROM daemon d
+        JOIN daemonUsers du ON d.id = du.daemon_id
+        WHERE du.user_id = $1`,
+      [user_id],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener demonios del usuario" });
+  }
+};
+
 export const asignDaemonToUser = async (req, res) => {
   try {
     const {

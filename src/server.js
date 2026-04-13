@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use("/auth", authRoutes); // Rutas de login/logout
 app.use("/users", userRoutes); // Rutas de usuarios
 app.use("/daemon", daemonRoutes); // Rutas de demonios
-app.use("/daemonUseers", daemonUserRoutes); //Rutas para asignar/desasignar demonios a usuarios
+app.use("/daemonUsers", daemonUserRoutes); //Rutas para asignar/desasignar demonios a usuarios
 app.use("/races", racesRoutes); // Rutas para consultar razas
 app.use("/calculator", calculatorRouters); //
 
