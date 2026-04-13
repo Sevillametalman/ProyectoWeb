@@ -3,7 +3,7 @@
     <div class="panel-header w-full max-w-6xl">
       <div class="header-left">
         <span class="status-dot" :class="{ active: !loading }"></span>
-        <span class="panel-title">BATTLE_ARENA :: CORE</span>
+        <span class="panel-title">Calculadora de fusiones :: CORE</span>
         <span class="pid-badge" v-if="daemons.length"
           >HOSTS: {{ daemons.length }}</span
         >
@@ -15,7 +15,7 @@
           :disabled="selectedIds.length < 2 || calculating"
           @click="startCalculation"
         >
-          {{ calculating ? "EJECUTANDO ALGORITMO..." : "⚔ INICIAR DUELO" }}
+          {{ calculating ? "EJECUTANDO ALGORITMO..." : "⚔ FUSIONAR" }}
         </button>
       </div>
     </div>
@@ -86,7 +86,7 @@
 
     <div class="w-full max-w-6xl px-2">
       <div class="section-divider mb-6">
-        <span>SELECCIONAR_UNIDADES_DE_PRUEBA</span>
+        <span>Demonios</span>
       </div>
 
       <div
@@ -129,7 +129,7 @@
                 LVL <span class="text-[#00e5a0]">{{ daemon.level }}</span>
               </div>
               <span class="text-[0.6rem] text-gray-400 font-mono uppercase">{{
-                daemon.description || "no_desc"
+                daemon.description || "Raza"
               }}</span>
             </div>
           </div>
