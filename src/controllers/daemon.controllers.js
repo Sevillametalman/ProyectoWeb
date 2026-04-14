@@ -146,7 +146,7 @@ export const getDaemonRaceById = async (req, res) => {
     const { rows } = await pool.query(
       `SELECT r.name FROM daemon d
         JOIN
-        race r ON d.race_id = r.id
+        races r ON d.race_id = r.id
         WHERE d.id = $1
       `,
       [id],
