@@ -58,10 +58,20 @@ export const unasignDaemonToUser = async (req, res) => {
   try {
     const { user_id, daemon_id } = req.params;
 
-    const result = await pool.query(
-      `DELETE FROM daemonUsers WHERE user_id = $1 AND daemon_id = $2`,
+    console.log("Desasignando demonio", { user_id, daemon_id });
+
+    const selectedDaemon = await pool.query(
+      `SELECT * FROM daemonUsers WHERE user_id = $1 AND daemon_id = $2`,
       [user_id, daemon_id],
     );
+
+    const selectedDaemonId = selectedDaemon.rows[0]?.id;
+
+    const result = await pool.query(`DELETE FROM daemonUsers WHERE id = $1`, [
+      selectedDaemonId,
+    ]);
+
+    res.status(201).json({ message: "Demonio desasignado correctamente" });
   } catch (error) {
     console.error(error);
     res

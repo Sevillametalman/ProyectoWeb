@@ -21,7 +21,7 @@
               'nav-tab--active': router.currentRoute.value.name === 'dashboard',
             }"
           >
-            <span>Daemons</span>
+            <span>Demonios</span>
             <span>◎</span>
           </div>
         </router-link>

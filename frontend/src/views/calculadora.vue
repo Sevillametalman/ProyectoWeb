@@ -3,9 +3,9 @@
     <div class="panel-header w-full max-w-6xl">
       <div class="header-left">
         <span class="status-dot" :class="{ active: !loading }"></span>
-        <span class="panel-title">Calculadora de fusiones :: CORE</span>
+        <span class="panel-title">CALCULADORA DE FUSIONES</span>
         <span class="pid-badge" v-if="daemons.length"
-          >HOSTS: {{ daemons.length }}</span
+          >CANTIDAD DE DEMONIOS: {{ daemons.length }}</span
         >
       </div>
       <div class="header-right">
@@ -26,7 +26,7 @@
           <div class="winner-box">
             <span
               class="text-[0.6rem] text-[#00e5a0] tracking-[0.3em] font-bold"
-              >VICTORIA DETECTADA</span
+              >RESULTADO DE LA FUSION</span
             >
             <h2 class="text-2xl font-black text-white uppercase mt-1">
               {{ winner.name }}
@@ -36,7 +36,7 @@
                 >ID: #{{ winner.id }}</span
               >
               <span class="text-[0.7rem] text-[#00e5a0]"
-                >ESTADO: DOMINANTE</span
+                >NIVEL: {{ winner.level }}</span
               >
             </div>
           </div>
@@ -54,7 +54,7 @@
           }"
         >
           <div v-if="selection[0]" class="slot-content">
-            <span class="slot-label text-[#00e5a0]">ALPHA_UNIT</span>
+            <span class="slot-label text-[#00e5a0]">DEMONIO A</span>
             <div class="slot-name">{{ selection[0].name }}</div>
             <div class="text-xs font-mono">LVL {{ selection[0].level }}</div>
           </div>
@@ -64,7 +64,7 @@
         <div
           class="md:col-span-1 text-center font-black text-2xl text-[#ff4466] italic"
         >
-          VS
+          +
         </div>
 
         <div
@@ -75,7 +75,7 @@
           }"
         >
           <div v-if="selection[1]" class="slot-content">
-            <span class="slot-label text-[#0090ff]">BETA_UNIT</span>
+            <span class="slot-label text-[#0090ff]">DEMONIO B</span>
             <div class="slot-name">{{ selection[1].name }}</div>
             <div class="text-xs font-mono">LVL {{ selection[1].level }}</div>
           </div>
@@ -86,7 +86,7 @@
 
     <div class="w-full max-w-6xl px-2">
       <div class="section-divider mb-6">
-        <span>Demonios</span>
+        <span>LISTA DE DEMONIOS</span>
       </div>
 
       <div
@@ -178,7 +178,7 @@ const winner = ref(null);
 async function fetchDaemons() {
   loading.value = true;
   try {
-    const data = await getDaemons();
+    const data = (await getDaemons()).sort((a, b) => a.id - b.id); // Ordenamos por ID ascendente
 
     // Mapeamos los daemons para traer sus razas en paralelo
     daemons.value = await Promise.all(

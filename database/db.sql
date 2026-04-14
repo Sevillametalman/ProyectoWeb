@@ -355,7 +355,7 @@ INSERT INTO daemon (name, race_id, level, hp, mp, strength, intelligence, magic,
 -- Therian (33)
 ('Werewolf', 33, 41, 400, 98, 25, 8, 8, 16, 20, 7),
 ('Werecat', 33, 23, 130, 56, 14, 10, 7, 10, 14, 8),
-('Weredog', 33, 5, 30, 22, 5, 7, 6, 9, 9, 5),
+('Weredog', 33, 5, 30, 22, 5, 7, 6, 9, 9, 5);
 
 INSERT into race_fusions (race1_id, race2_id, result_race_id) VALUES
 -- Fusiones de Deity (1)

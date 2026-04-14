@@ -23,7 +23,7 @@
     >
       <div class="avatar-card">
         <div class="avatar-hex">
-          <span class="avatar-initials">C</span>
+          <span class="avatar-initials">👤</span>
         </div>
         <div class="avatar-name">{{ user_.username || "—" }}</div>
         <span class="role-badge role">
@@ -34,7 +34,7 @@
     <!-- daemons -->
     <div class="border rounded-lg border-[#1e2530] mt-4 relative">
       <div class="header-title p-4 text-xl!">
-        <h3>Daemons del usuario:</h3>
+        <h3>Demonios del usuario:</h3>
       </div>
       <div class="absolute top-4 right-3">
         <button
@@ -189,13 +189,13 @@
             class="flex justify-between items-center px-5 py-3 border-b border-[#1f2937] bg-[#0b1016]"
           >
             <span class="text-[#3b82f6] text-xs font-bold tracking-widest"
-              >Asignar Daemon ::</span
+              >Asignar Demonio ::</span
             >
-            <button
+            <!-- <button
               class="text-[#3b82f6] hover:text-white transition-colors font-bold"
             >
               ✕
-            </button>
+            </button> -->
           </div>
 
           <div class="p-4">
@@ -250,7 +250,7 @@
               @click="handleAdd"
               class="px-4 py-2 cursor-pointer border border-[#1f2937] text-gray-300 text-sm hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
             >
-              Asignar Daemon
+              Asignar Demonio
             </button>
           </div>
         </div>
@@ -261,12 +261,12 @@
     <div v-if="openModalUnasign" class="modal-overlay">
       <div class="modal">
         <div class="modal-header text-red-500!">
-          <span>Daemon :: </span>
+          <span>Demonio :: </span>
           <button class="btn-icon" @click="openModalUnasign = false">✕</button>
         </div>
         <div class="modal-body">
           <span class="text-center">
-            ¿ Estas seguro que deseas desasignar este daemon ?
+            ¿ Estas seguro que deseas desasignar este demonio ?
           </span>
           <div class="flex gap-2 justify-center">
             <button
@@ -339,7 +339,7 @@ function handleUnasign(daemon) {
 }
 async function fetchDaemons() {
   try {
-    const res = await getDaemons();
+    const res = (await getDaemons()).sort((a, b) => a.id - b.id);
     daemons.value = res;
   } catch (error) {
     console.log(error);

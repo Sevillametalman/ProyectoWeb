@@ -11,7 +11,7 @@
         <input
           v-model="search"
           class="search-input"
-          placeholder="buscar Daemons..."
+          placeholder="buscar Demonios..."
           @input="filterDaemons"
         />
         <button
@@ -31,7 +31,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label text-base! text-white!"
-              >Nombre del Daemons</label
+              >Nombre del Demonio</label
             >
             <input v-model="newDaemon.name" class="form-input" placeholder="" />
           </div>
@@ -193,7 +193,7 @@
         <span>ID</span>
         <span>NOMBRE</span>
         <span>RAZA</span>
-        <span>LEVEl</span>
+        <span>NIVEL</span>
         <span>ACCIONES</span>
       </div>
       <transition-group name="row" tag="div">
@@ -260,7 +260,7 @@
       <div v-if="viewModal && selectedDaemon" class="modal-overlay">
         <div class="modal">
           <div class="modal-header">
-            <span>Daemon :: {{ selectedDaemon.name }}</span>
+            <span>Demonio :: {{ selectedDaemon.name }}</span>
             <button
               class="btn-icon"
               @click="
@@ -281,7 +281,7 @@
       <div v-if="deleteModal && selectedDaemon" class="modal-overlay">
         <div class="modal">
           <div class="modal-header text-red-500!">
-            <span>Daemon :: {{ selectedDaemon.name }} </span>
+            <span>Demonio :: {{ selectedDaemon.name }} </span>
             <button
               class="btn-icon"
               @click="
@@ -310,7 +310,7 @@
                 @click="handleDelete()"
                 class="border border-[#1f2937] cursor-pointer hover:border-red-500 py-2 px-1"
               >
-                Eliminar Daemon
+                Eliminar Demonio
               </button>
             </div>
           </div>
@@ -321,7 +321,7 @@
       <div v-if="editModal && selectedDaemon" class="modal-overlay">
         <div class="modal">
           <div class="modal-header text-[#00ffaa]!">
-            <span>Daemon :: {{ selectedDaemon.name }} </span>
+            <span>Demonio :: {{ selectedDaemon.name }} </span>
             <button
               class="btn-icon"
               @click="
@@ -516,7 +516,7 @@
                 @click="handleEdit()"
                 class="border border-[#1f2937] cursor-pointer hover:border-[#00ffaa] py-2 px-1"
               >
-                Editar Daemon
+                Editar Demonio
               </button>
             </div>
           </div>
@@ -574,6 +574,7 @@ async function fetchDaemons() {
   try {
     daemons.value = await getDaemons();
     filtered.value = [...daemons.value];
+    filtered.value.sort((a, b) => a.id - b.id);
 
     /* obtener razas */
     races.value = await getAllRaces();
@@ -610,8 +611,17 @@ function validateIntegerEdit() {
 
 async function spawnDaemon() {
   formError.value = null;
+  console.log(newDaemon.value);
   if (!newDaemon.value.name.trim()) {
     formError.value = "El nombre es requerido.";
+    return;
+  }
+  if(newDaemon.value.race_id === 0){
+    formError.value = "La raza es requerida.";
+    return;
+  }
+  if(newDaemon.value.strength <= 0 || newDaemon.value.intelligence <= 0 || newDaemon.value.magic <= 0 || newDaemon.value.vitality <= 0 || newDaemon.value.agility <= 0 || newDaemon.value.luck <= 0 || newDaemon.value.HP <= 0 || newDaemon.value.MP <= 0 || newDaemon.value.level <= 0){
+    formError.value = "Las estadisticas no pueden ser negativas o cero.";
     return;
   }
   if (!validateInteger()) {

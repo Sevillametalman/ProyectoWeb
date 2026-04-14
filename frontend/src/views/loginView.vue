@@ -10,7 +10,7 @@
         <div class="brand-text">
           <span class="brand-name">ProyectoWeb</span>
           <span class="brand-sub text-white!"
-            >Sistema de Control de Daemons</span
+            >Sistema de Control de Demonios</span
           >
         </div>
       </div>

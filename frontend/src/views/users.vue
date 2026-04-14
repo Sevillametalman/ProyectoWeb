@@ -80,7 +80,7 @@
           </div>
 
           <div class="w-full mt-2">
-            <h3>Daemons</h3>
+            <h3>Demonios</h3>
             <div class="flex overflow-hidden gap-2 mt-1">
               <span
                 v-if="_user && _user.daemons?.length"
