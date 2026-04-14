@@ -136,11 +136,36 @@
         </div>
       </div>
     </div>
+    <transition name="fade">
+      <div
+        v-if="showErrorModal"
+        class="modal-overlay"
+        @click.self="showErrorModal = false"
+      >
+        <div class="modal-error">
+          <div class="modal-error-header">
+            <span>ERROR DE FUSIÓN</span>
+            <button @click="showErrorModal = false">✕</button>
+          </div>
+          <div class="modal-error-body">
+            <div class="error-icon">⚠️</div>
+            <p class="error-msg">
+              Los daemons seleccionados no pueden ser fusionados.
+            </p>
+            <p class="error-sub">Dios trabaja de formas misteriosas.</p>
+            <button class="btn-error-close" @click="showErrorModal = false">
+              CERRAR
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+const showErrorModal = ref(false); // Agrégalo junto a tus otros 'ref'
 import { getDaemons, getBattleResult } from "@/api/index.js";
 
 const daemons = ref([]);
@@ -192,18 +217,24 @@ function resetSelection() {
 
 async function startCalculation() {
   if (selectedIds.value.length < 2) return;
-
   calculating.value = true;
   winner.value = null;
 
-  const [id1, id2] = selectedIds.value;
-
   try {
-    // Llamada a la API que definiste en Express
-    const result = await getBattleResult(id1, id2);
-    winner.value = result;
+    const result = await getBattleResult(
+      selectedIds.value[0],
+      selectedIds.value[1],
+    );
+
+    // Si la API responde pero el objeto está vacío o no existe
+    if (!result || Object.keys(result).length === 0) {
+      showErrorModal.value = true;
+    } else {
+      winner.value = result;
+    }
   } catch (e) {
-    console.error("Error en la Arena:", e);
+    // Si el servidor no responde o hay error de red
+    showErrorModal.value = true;
   } finally {
     calculating.value = false;
   }
@@ -392,5 +423,61 @@ onMounted(fetchDaemons);
   .slot-name {
     font-size: 1.1rem;
   }
+}
+/* Transiciones */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-error {
+  background: #0d1117;
+  border: 1px solid #ff4466; /* Rojo de error */
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 30px rgba(255, 68, 102, 0.2);
+}
+
+.modal-error-header {
+  background: #ff4466;
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  font-weight: 900;
+}
+
+.modal-error-body {
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-msg {
+  color: #ff4466;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+}
+
+.btn-error-close {
+  background: transparent;
+  border: 1px solid #ff4466;
+  color: #ff4466;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
