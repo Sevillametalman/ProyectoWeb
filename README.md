@@ -1,35 +1,63 @@
-# Proyecto Web: Gestión de Daemons y Usuarios
+# Proyecto Web: Gestión de Demonios y Usuarios
 
-## Requisitos previos
+## Definición del Tema y Alcance
 
-- Node.js (v16 o superior recomendado)
-- PostgreSQL
-- Git
+Aplicación web dinámica para la gestión de Demonios y usuarios, permitiendo la administración de entidades, asignación y control de atributos, con autenticación y autorización segura. El sistema resuelve la problemática de gestión de criaturas y usuarios en un entorno gamificado.
+
+## Requisitos Técnicos
+
+### Frontend
+
+- **Framework:** Vue.js 3
+- **UI:** Totalmente responsive usando Tailwind CSS
+- **Consumo de API:** Comunicación asíncrona con fetch
+- **Gestión de Estado:** Pinia (o Vuex) para usuario y sesión
+
+### Backend
+
+- **Servidor:** Node.js con Express
+- **API RESTful:** Endpoints siguiendo convenciones HTTP (GET, POST, PUT, DELETE)
+- **Validación:** Todas las entradas validadas con Zod
+
+### Base de Datos
+
+- **DB:** PostgreSQL
+- **Modelo Relacional:** Tablas para usuarios, daemons, razas, relaciones usuario-daemon
+- **CRUD Completo:** Crear, leer, actualizar y eliminar entidades complejas
+
+### Seguridad
+
+- **Autenticación:** Login/registro funcional
+- **Autorización:** JWT para rutas privadas
+- **Protección de datos:** Contraseñas hasheadas con bcrypt
 
 ## Instalación y configuración
 
 1. **Clona el repositorio:**
+
    ```bash
    git clone <URL-del-repositorio>
    cd ProyectoWeb
    ```
 
 2. **Instala las dependencias:**
+
    ```bash
    npm install
+   cd frontend && npm install
    ```
 
 3. **Configura la base de datos:**
-   - Crea una base de datos en PostgreSQL (por ejemplo, `proyectoweb`).
-   - Modifica la configuración de conexión en `src/db.js` si es necesario.
-   - Ejecuta el script de creación de tablas:
+   - Crea una base de datos PostgreSQL (ej: `proyectoweb`).
+     > En la consola podría realizarse el comando `CREATE DATABASE proyectoweb;` luego de conectarse haciendo `psql -U <usuario>`
+   - Modifica la conexión en `src/db.js` si es necesario.
+   - Ejecuta el script de tablas:
      ```bash
      psql -U <usuario> -d proyectoweb -f database/db.sql
      ```
 
-4. **Configura las variables de entorno:**
-   - Crea un archivo `.env` en la raíz del proyecto si es necesario.
-   - Ejemplo de variables:
+4. **Variables de entorno:**
+   - Crea `.env` en la raíz:
      ```env
      PORT=4000
      DB_USER=tu_usuario
@@ -37,13 +65,22 @@
      DB_HOST=localhost
      DB_PORT=5432
      DB_DATABASE=proyectoweb
+     JWT_SECRET=tu_clave_secreta
      ```
 
-5. **Inicia el servidor:**
+5. **Inicia el backend:**
+
    ```bash
-   npm start
+   npm run dev
    ```
-   El servidor estará disponible en `http://localhost:4000`.
+
+   El backend estará en `http://localhost:4000`.
+
+6. **Inicia el frontend:**
+   ```bash
+   npm run dev:frontend
+   ```
+   El frontend estará en `http://localhost:5173` (por defecto).
 
 ## Estructura del proyecto
 
@@ -51,38 +88,44 @@
 ProyectoWeb/
 ├── database/
 │   └── db.sql
-├── public/
+├── frontend/
+│   ├── src/
+│   └── ...
 ├── src/
 │   ├── config.js
 │   ├── db.js
 │   ├── server.js
 │   ├── controllers/
 │   │   ├── daemon.controllers.js
-│   │   └── user.controllers.js
+│   │   ├── user.controllers.js
+│   │   └── ...
 │   └── routes/
 │       ├── daemon.routes.js
-│       └── user.routes.js
+│       ├── user.routes.js
+│       └── ...
 └── package.json
 ```
 
-## Endpoints principales
+## Endpoints principales (RESTful)
 
 - **Usuarios**
-  - `GET /users` — Obtener todos los usuarios
+  - `GET /users` — Listar usuarios
   - `POST /users` — Crear usuario
-  - ...
-- **Daemons**
-  - `GET /daemon` — Obtener todos los daemons
+  - `PUT /users/:id` — Actualizar usuario
+  - `DELETE /users/:id` — Eliminar usuario
+- **Demonios**
+  - `GET /daemon` — Listar daemons
   - `POST /daemon` — Crear daemon
   - `GET /daemon/id/:id` — Buscar daemon por ID
   - `GET /daemon/name/:name` — Buscar daemon por nombre
-  - ...
-
-## Notas
-- Usa Postman o similar para probar los endpoints.
-- Asegúrate de que la base de datos esté corriendo antes de iniciar el servidor.
-- Si tienes problemas de conexión, revisa la configuración en `src/db.js` y las variables de entorno.
-
+  - `PUT /daemon/name/:name` — Editar daemon
+  - `DELETE /daemon/name/:name` — Eliminar daemon
+- **Relaciones usuario-daemon**
+  - `GET /daemonUsers/:user_id` — Demonios de un usuario
+  - `POST /daemonUsers/:user_id/:daemon_id` — Asignar daemon a usuario
+  - `DELETE /daemonUsers/:user_id/:daemon_id` — Desasignar daemon
+- **Auth**
+  - `POST /auth/login` — Login
+  - `POST /auth/logout` — Logout
+  - `GET /auth/me` — Usuario autenticado
 ---
-
-¡Listo! Ahora puedes empezar a trabajar en el proyecto.
