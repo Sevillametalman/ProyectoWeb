@@ -75,6 +75,19 @@ export const getDaemonsByUserId = (user_id) =>
   fetch(`${BASE_URL}/daemonUsers/${user_id}`, { headers: authHeaders() }).then(
     (r) => r.json(),
   );
+export const asignDaemonUser = (data, user_id, daemon_id) =>
+  fetch(`${BASE_URL}/daemonUsers/${user_id}/${daemon_id}`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
+
+export const unasignDaemonToUser = (user_id, daemon_id) =>
+  fetch(`${BASE_URL}/daemonUsers/${user_id}/${daemon_id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  }).then((r) => r.json());
+
 export const editDaemon = (data) =>
   fetch(`${BASE_URL}/daemon/name/${data.name}`, {
     method: "put",

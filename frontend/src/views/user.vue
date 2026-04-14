@@ -8,7 +8,7 @@
         <div class="header-title">
           <span class="header-icon">◎</span>
           <span>USUARIO</span>
-          <span class="uid-badge">uid:{{ user.id || "—" }}</span>
+          <span class="uid-badge">uid:{{ user_.id || "—" }}</span>
         </div>
       </div>
       <div class="header-meta">
@@ -25,20 +25,31 @@
         <div class="avatar-hex">
           <span class="avatar-initials">C</span>
         </div>
-        <div class="avatar-name">{{ user.username || "—" }}</div>
+        <div class="avatar-name">{{ user_.username || "—" }}</div>
         <span class="role-badge role">
-          {{ user.admin ? "Admin" : "User" }}
+          {{ user_.admin ? "Admin" : "User" }}
         </span>
       </div>
     </div>
     <!-- daemons -->
-    <div class="border rounded-lg border-[#1e2530] mt-4">
-      <div class="header-title p-4 text-base!">Daemons del usuario:</div>
+    <div class="border rounded-lg border-[#1e2530] mt-4 relative">
+      <div class="header-title p-4 text-xl!">
+        <h3>Daemons del usuario:</h3>
+      </div>
+      <div class="absolute top-4 right-3">
+        <button
+          @click="openModal = true"
+          class="text-black px-4 py-2 cursor-pointer bg-[#00ffaa] hover:bg-[#00ffaa]/80"
+        >
+          Asignar daemon
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- card -->
         <div
-          v-if="user && user.daemons?.length"
-          v-for="daemon in user.daemons || []"
+          v-if="user_ && user_.daemons?.length"
+          v-for="daemon in user_.daemons || []"
           :key="daemon.id"
           class="bg-[#0f141b] border border-[#1f2937] relative flex p-6 m-4 shadow-lg hover:scale-105 transition-all duration-300 rounded-lg"
         >
@@ -46,6 +57,14 @@
             <span class="badge-race text-amber-400! border-[#1f2937]!"
               >Raza: {{ daemon.race?.name }}
             </span>
+          </div>
+          <!-- Solo admin -->
+          <div
+            v-if="user.admin"
+            @click="handleUnasign(daemon)"
+            class="absolute top-2 right-2 text-red-300 cursor-pointer w-6 h-6 text-center hover:text-red-500 transition-colors duration-300 flex items-center justify-center"
+          >
+            <span>X</span>
           </div>
 
           <div
@@ -160,32 +179,153 @@
       </div>
     </div>
   </div>
+  <transition name="fade">
+    <div v-if="openModal" class="modal-overlay">
+      <div class="modal">
+        <div
+          class="w-full max-w-lg bg-[#0f141b] border border-[#1f2937] shadow-2xl relative"
+        >
+          <div
+            class="flex justify-between items-center px-5 py-3 border-b border-[#1f2937] bg-[#0b1016]"
+          >
+            <span class="text-[#3b82f6] text-xs font-bold tracking-widest"
+              >Asignar Daemon ::</span
+            >
+            <button
+              class="text-[#3b82f6] hover:text-white transition-colors font-bold"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="p-4">
+            <div
+              class="grid grid-cols-[40px_60px_1fr_1fr_80px] gap-2 px-3 py-2 border-b border-[#1f2937] text-xs text-gray-500 mb-2 uppercase tracking-wider"
+            >
+              <div>Sel</div>
+              <div>ID</div>
+              <div>Nombre</div>
+              <div>Raza</div>
+              <div class="text-right">Level</div>
+            </div>
+
+            <div class="max-h-60 overflow-y-auto flex flex-col gap-1 pr-1 list">
+              <label
+                v-for="daemon in daemons"
+                :key="daemon.id"
+                class="grid grid-cols-[40px_60px_1fr_1fr_80px] gap-2 px-3 py-3 items-center border border-[#1f2937] hover:border-[#1e3a8a] hover:bg-[#0b2136] cursor-pointer transition-colors"
+              >
+                <div>
+                  <input
+                    type="radio"
+                    name="daemon_select"
+                    :value="daemon"
+                    v-model="daemonSelected"
+                    checked
+                    class="w-4 h-4 text-[#3b82f6] bg-[#0f141b] border-[#3b82f6] focus:ring-[#3b82f6] focus:ring-1 cursor-pointer"
+                  />
+                </div>
+                <div class="text-gray-400 text-xs">#{{ daemon.id }}</div>
+                <div class="text-white text-sm font-semibold">
+                  {{ daemon.name }}
+                </div>
+                <div class="text-gray-400 text-xs">{{ daemon.race }}</div>
+                <div class="text-right text-[#00ffaa] text-xs font-bold">
+                  {{ daemon.level }}
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div
+            class="flex justify-center gap-4 p-4 border-t border-[#1f2937] bg-[#0b1016]"
+          >
+            <button
+              @click="openModal = false"
+              class="px-4 py-2 cursor-pointer border border-[#1f2937] text-gray-400 text-sm hover:border-[#1f2937]/80 hover:text-white transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="handleAdd"
+              class="px-4 py-2 cursor-pointer border border-[#1f2937] text-gray-300 text-sm hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
+            >
+              Asignar Daemon
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+  <transition name="fade">
+    <div v-if="openModalUnasign" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header text-red-500!">
+          <span>Daemon :: </span>
+          <button class="btn-icon" @click="openModalUnasign = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <span class="text-center">
+            ¿ Estas seguro que deseas desasignar este daemon ?
+          </span>
+          <div class="flex gap-2 justify-center">
+            <button
+              @click="openModalUnasign = false"
+              class="border border-[#1f2937] cursor-pointer hover:border-[#1f2937]/80 py-2 px-1"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="handleDesasignar()"
+              class="border border-[#1f2937] cursor-pointer hover:border-red-500 py-2 px-1"
+            >
+              Desasignar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { getUserById, getDaemonsByUserId, getRaceById } from "@/api/index.js";
+import {
+  getUserById,
+  getDaemonsByUserId,
+  getRaceById,
+  getDaemons,
+  asignDaemonUser,
+  unasignDaemonToUser,
+} from "@/api/index.js";
 import { useRouter } from "vue-router";
+import { useAuth } from "@/stores/auth.js";
+const { user } = useAuth();
 
 const router = useRouter();
-const user = ref({});
+const openModal = ref(false);
+const user_ = ref({});
+const daemons = ref([]);
+const daemonSelected = ref({});
+const daemonDesasignar = ref({});
+const openModalUnasign = ref(false);
 
 async function fetchUser() {
   const id = router.currentRoute.value.params.id;
   try {
     const data = await getUserById(id);
-    user.value = data;
+    user_.value = data;
 
     // Obtener los daemons asociados al usuario
-    if (user.value.id) {
-      const daemons = await getDaemonsByUserId(user.value.id);
-      user.value.daemons = daemons;
+    if (user_.value.id) {
+      const daemons = await getDaemonsByUserId(user_.value.id);
+      user_.value.daemons = daemons;
     }
     /* get race */
-    if (user.value.daemons) {
-      for (let i = 0; i < user.value.daemons.length; i++) {
-        const daemon = user.value.daemons[i];
+    if (user_.value.daemons) {
+      for (let i = 0; i < user_.value.daemons.length; i++) {
+        const daemon = user_.value.daemons[i];
         const race = await getRaceById(daemon.id);
-        user.value.daemons[i].race = race;
+        user_.value.daemons[i].race = race;
       }
     }
   } catch (error) {
@@ -193,9 +333,52 @@ async function fetchUser() {
     // Manejar el error, por ejemplo, mostrando un mensaje o redirigiendo
   }
 }
-
+function handleUnasign(daemon) {
+  daemonDesasignar.value = daemon;
+  openModalUnasign.value = true;
+}
+async function fetchDaemons() {
+  try {
+    const res = await getDaemons();
+    daemons.value = res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function handleAdd() {
+  try {
+    const daemonAsign = {
+      name: daemonSelected.value.name,
+      race_id: daemonSelected.value.race_id,
+      level: daemonSelected.value.level,
+      hp: daemonSelected.value.hp,
+      mp: daemonSelected.value.mp,
+      strength: daemonSelected.value.strength,
+      intelligence: daemonSelected.value.intelligence,
+      magic: daemonSelected.value.magic,
+      vitality: daemonSelected.value.vitality,
+      agility: daemonSelected.value.agility,
+      luck: daemonSelected.value.luck,
+    };
+    await asignDaemonUser(daemonAsign, user_.value.id, daemonSelected.value.id);
+    await fetchUser();
+    openModal.value = false;
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+async function handleDesasignar() {
+  try {
+    await unasignDaemonToUser(user_.value.id, daemonDesasignar.value.id);
+    await fetchUser();
+    openModalUnasign.value = false;
+  } catch (error) {
+    console.log(error);
+  }
+}
 onMounted(() => {
   fetchUser();
+  fetchDaemons();
 });
 </script>
 <style scoped>
@@ -337,5 +520,67 @@ onMounted(() => {
   50% {
     opacity: 0.5;
   }
+}
+.list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
+}
+/* ── Modal ───────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: #111418;
+  border: 1px solid #1e2530;
+  border-top: 3px solid #0090ff;
+  width: min(480px, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1e2530;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0090ff;
+  letter-spacing: 0.1em;
+}
+.modal-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.modal-row {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+.modal-key {
+  color: #4a5568;
+  min-width: 110px;
+  font-size: 0.75rem;
+}
+.modal-val {
+  color: #c8d0dc;
+  word-break: break-all;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
