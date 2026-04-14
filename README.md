@@ -11,7 +11,6 @@ Aplicación web dinámica para la gestión de Demonios y usuarios, permitiendo l
 - **Framework:** Vue.js 3
 - **UI:** Totalmente responsive usando Tailwind CSS
 - **Consumo de API:** Comunicación asíncrona con fetch
-- **Gestión de Estado:** Pinia (o Vuex) para usuario y sesión
 
 ### Backend
 
