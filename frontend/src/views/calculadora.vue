@@ -451,10 +451,12 @@ onMounted(fetchDaemons);
 
 .modal-error {
   background: #0d1117;
-  border: 1px solid #ff4466; /* Rojo de error */
-  width: 90%;
-  max-width: 400px;
+  border: 1px solid #ff4466;
+  width: 100%;
+  max-width: 450px; /* Tamaño máximo en desktop */
   box-shadow: 0 0 30px rgba(255, 68, 102, 0.2);
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-error-header {
@@ -462,29 +464,70 @@ onMounted(fetchDaemons);
   color: #000;
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
   font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
 }
 
 .modal-error-body {
-  padding: 2rem;
+  padding: 2.5rem 1.5rem;
   text-align: center;
 }
-
+.error-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
 .error-msg {
   color: #ff4466;
   font-weight: 900;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
-
+.error-sub {
+  color: #4a5568;
+  font-size: 0.8rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
 .btn-error-close {
   background: transparent;
   border: 1px solid #ff4466;
   color: #ff4466;
-  padding: 0.6rem 1.5rem;
+  padding: 0.8rem 2rem;
   cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  width: 100%; /* Botón ancho completo en móviles */
+}
+.btn-error-close:hover {
+  background: rgba(255, 68, 102, 0.1);
+  letter-spacing: 0.1em;
 }
 
+/* --- MEDIA QUERIES PARA MÓVIL --- */
+@media (max-width: 480px) {
+  .modal-error-body {
+    padding: 2rem 1rem;
+  }
+
+  .error-msg {
+    font-size: 0.95rem; /* Texto un poco más pequeño en móviles */
+  }
+
+  .error-icon {
+    font-size: 2rem;
+  }
+
+  .modal-error-header span {
+    font-size: 0.7rem;
+  }
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;

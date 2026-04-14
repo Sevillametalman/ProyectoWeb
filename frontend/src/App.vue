@@ -10,8 +10,10 @@
         <span class="brand-name text-base!">ProyectoWeb</span>
         <span class="brand-ver">v1.0</span>
       </div>
-
-      <nav class="nav">
+      <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">
+        {{ isMenuOpen ? "✕" : "☰" }}
+      </button>
+      <nav class="nav" :class="{ 'nav--open': isMenuOpen }">
         <router-link to="/">
           <div
             class="nav-tab"
@@ -59,7 +61,7 @@
             >
               <div class="avatar-hex"></div>
 
-              <div class="">
+              <div class="user-text hide-mobile">
                 <h2 class="font-bold text-gray-300 text-lg">
                   {{ user?.username }}
                 </h2>
@@ -85,12 +87,14 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useAuth } from "@/stores/auth.js";
 import { useRouter } from "vue-router";
-
+const isMenuOpen = ref(false);
 const { user, clearSession } = useAuth();
 const router = useRouter();
 const clock = ref("");
 let timer;
-
+router.afterEach(() => {
+  isMenuOpen.value = false;
+});
 function updateClock() {
   clock.value = new Date().toLocaleTimeString("es-MX", { hour12: false });
 }
@@ -125,8 +129,12 @@ onUnmounted(() => clearInterval(timer));
   align-items: center;
   justify-content: center;
 }
-
+* {
+  box-sizing: border-box;
+}
 .app {
+  width: auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -237,11 +245,13 @@ onUnmounted(() => clearInterval(timer));
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  height: 52px;
+  height: 64px;
   background: #0d1117;
   border-bottom: 1px solid #1e2530;
-  flex-shrink: 0;
-  gap: 1rem;
+
+  /* CAMBIOS CLAVE: */
+  width: 100%; /* Asegura que ocupe el ancho */
+  flex-shrink: 0; /* Evita que se colapse */
 }
 
 .brand {
@@ -344,5 +354,112 @@ onUnmounted(() => clearInterval(timer));
   color: #ff4466;
   border-color: #ff4466;
   background: rgba(255, 68, 102, 0.06);
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  height: 64px; /* Altura fija más estándar */
+  background: #0d1117;
+  border-bottom: 1px solid #1e2530;
+  position: relative;
+  z-index: 100;
+}
+
+.user-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.3s;
+}
+
+.user-profile-info:hover {
+  transform: scale(1.05);
+}
+
+.username {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #c8d0dc;
+  margin: 0;
+  line-height: 1;
+}
+
+.user-role {
+  font-size: 0.65rem;
+  color: #00e5a0;
+}
+
+/* ── Responsive Logic ── */
+
+.menu-toggle {
+  display: none; /* Oculto en desktop */
+  background: transparent;
+  border: 1px solid #1e2530;
+  color: #00e5a0;
+  font-size: 1.2rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 850px) {
+  .menu-toggle {
+    display: block;
+    order: 2;
+  }
+  .brand {
+    order: 1;
+  }
+  .topbar-right {
+    order: 3;
+    gap: 0.5rem;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+  .mobile-only {
+    display: block;
+  }
+
+  .nav {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    background: #0d1117;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.5rem;
+    border-bottom: 1px solid #1e2530;
+    display: none; /* Oculto por defecto */
+  }
+
+  .nav--open {
+    display: flex;
+  } /* Clase para abrir */
+
+  .nav-tab {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+  }
+
+  .user-menu {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+/* Ajuste para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .brand-name {
+    display: none;
+  } /* Solo queda el icono y versión */
 }
 </style>
