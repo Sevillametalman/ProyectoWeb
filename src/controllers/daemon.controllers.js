@@ -139,3 +139,21 @@ export const deleteDaemonByName = async (req, res) => {
     console.error(error);
   }
 };
+
+export const getDaemonRaceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      `SELECT r.name FROM daemon d
+        JOIN
+        race r ON d.race_id = r.id
+        WHERE d.id = $1
+      `,
+      [id],
+    );
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener la raza del demonio" });
+  }
+};
