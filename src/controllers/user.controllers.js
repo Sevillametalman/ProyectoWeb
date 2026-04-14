@@ -1,4 +1,5 @@
 import pool from "../db.js";
+import bcrypt from "bcrypt";
 
 //Buscar usuarios
 export const getUsers = async (req, res) => {
@@ -39,10 +40,14 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
+    // Hashear la contraseña antes de guardar
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Insertar en la base de datos
     const result = await pool.query(
       `INSERT INTO users (username, password, admin) VALUES ($1,$2,$3) RETURNING *`,
-      [username, password, admin],
+      [username, hashedPassword, admin],
     );
     res.json(result.rows[0]);
   } catch (error) {
@@ -82,11 +87,22 @@ export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { username, password, admin } = req.body;
-
-    const result = await pool.query(
-      `UPDATE users SET username = $1, password = $2, admin = $3 WHERE id = $4 RETURNING *`,
-      [username, password, admin, id],
-    );
+    console.log("ID:", id);
+    console.log("Datos recibidos:", username, password, admin);
+    let result;
+    if (password) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      result = await pool.query(
+        `UPDATE users SET username = $1, password = $2, admin = $3 WHERE id = $4 RETURNING *`,
+        [username, hashedPassword, admin, id],
+      );
+    } else {
+      result = await pool.query(
+        `UPDATE users SET username = $1, admin = $2 WHERE id = $3 RETURNING *`,
+        [username, admin, id],
+      );
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Persona no encontrada" });
