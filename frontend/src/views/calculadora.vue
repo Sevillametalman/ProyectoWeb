@@ -129,7 +129,7 @@
                 LVL <span class="text-[#00e5a0]">{{ daemon.level }}</span>
               </div>
               <span class="text-[0.6rem] text-gray-400 font-mono uppercase">{{
-                daemon.description || "Raza"
+                daemon.raceName || "Cargando..."
               }}</span>
             </div>
           </div>
@@ -166,7 +166,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 const showErrorModal = ref(false); // Agrégalo junto a tus otros 'ref'
-import { getDaemons, getBattleResult } from "@/api/index.js";
+import { getDaemons, getBattleResult, getDaemonRace } from "@/api/index.js";
 
 const daemons = ref([]);
 const selection = ref([null, null]);
@@ -178,9 +178,22 @@ const winner = ref(null);
 async function fetchDaemons() {
   loading.value = true;
   try {
-    daemons.value = await getDaemons();
+    const data = await getDaemons();
+
+    // Mapeamos los daemons para traer sus razas en paralelo
+    daemons.value = await Promise.all(
+      data.map(async (d) => {
+        try {
+          const raceData = await getDaemonRace(d.id);
+          // Asumimos que raceData trae un campo .name o .race_name
+          return { ...d, raceName: raceData.name };
+        } catch (e) {
+          return { ...d, raceName: "Desconocida" };
+        }
+      }),
+    );
   } catch (e) {
-    console.error("Error al sincronizar con el servidor");
+    console.error("Error al sincronizar");
   } finally {
     loading.value = false;
   }

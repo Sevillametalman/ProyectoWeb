@@ -110,3 +110,12 @@ export const getBattleResult = (id1, id2) =>
     if (!r.ok) throw new Error("Error en el cálculo de la arena");
     return r.json();
   });
+
+// ── obtener raza del demonio ─────────────────────────────────────────
+export const getDaemonRace = (id) =>
+  fetch(`${BASE_URL}/daemon/race/${id}`, {
+    headers: authHeaders(),
+  }).then((r) => {
+    if (!r.ok) throw new Error("Error al obtener la raza del demonio");
+    return r.json();
+  });
